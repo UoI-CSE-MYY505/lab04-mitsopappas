@@ -43,7 +43,29 @@ str_ge:
 
 recCheck:
 #---------
-# Write the subroutine code here
-#  You may move jr ra   if you wish.
+recCheck:
+            slti t0, a1,   2
+            beq  t0, zero, checkFirstTwo
+            addi a0, zero, 1  # return 1
+            jr   ra
+checkFirstTwo:
+            addi sp, sp,   -12
+            sw   ra, 8(sp)
+            sw   a0, 4(sp)
+            sw   a1, 0(sp)
+            lw   a1, 0(a0)  # 1st
+            lw   a0, 4(a0)  # 2nd 
+            jal  str_ge
+            beq  a0, zero, return  # return 0, a0 is already 0
+            # do recursion
+            lw   a0, 4(sp)    # get original a0, a1 from stack
+            lw   a1, 0(sp)
+            addi a0, a0,   4   # check the rest of the array, after 1st element.
+            addi a1, a1,   -1  # size-1
+            jal  recCheck
+return:
+            lw   ra, 8(sp)
+            addi sp, sp,   12
+            jr   ra
 #---------
             jr   ra
